@@ -16,13 +16,13 @@
 <script src="js/bg.js"></script>
 
 <script>
-  const perfectFrameTime = 1 / 60;
+  const frametime = 1 / 30;
   var deltaTime = 0;
   var lastTimestamp = 0;
   
   update = function() {
     requestAnimationFrame(update);
-    deltaTime = (timestamp - lastTimestamp) / perfectFrameTime;
+    deltaTime = (timestamp - lastTimestamp) / frametime;
     lastTimestamp = timestamp;
     
   };
