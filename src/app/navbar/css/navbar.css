@@ -80,6 +80,10 @@ nav {
   align-items: center;
 }
 
+.logo {
+  padding-left: 8px
+}
+
 @media screen and (min-width: 768px) {
   .nav__menu-bar{
     display: none;

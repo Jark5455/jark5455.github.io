@@ -20,13 +20,10 @@ export default function NavBar() {
       <nav className={`nav`}>
         <Link legacyBehavior href={"/"}>
           <a>
-            <Image width={120} height={120} src="/svg/banan-full-yellow.svg" alt="Banan"/>
+            <Image className="logo" width={120} height={120} src="/svg/banan-full-yellow.svg" alt="Banan"/>
           </a>
         </Link>
-        <div
-          onClick={() => setNavActive(!navActive)}
-          className={`nav__menu-bar`}
-        >
+        <div onClick={() => setNavActive(!navActive)} className={`nav__menu-bar`}>
           <div></div>
           <div></div>
           <div></div>
