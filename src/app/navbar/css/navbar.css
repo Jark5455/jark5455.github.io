@@ -26,7 +26,7 @@ nav {
   align-items: center;
   background-color: #222222;
   width: 100vw;
-  height: 10vh;
+  min-height: fit-content;
 }
 
 .nav__menu-bar {
