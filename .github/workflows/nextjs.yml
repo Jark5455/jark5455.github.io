@@ -51,6 +51,8 @@ jobs:
             echo "Unable to determine package manager"
             exit 1
           fi
+          
+          cd ${{ github.workspace }}/thebananprojectstudio
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
