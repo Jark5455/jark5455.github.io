@@ -20,7 +20,7 @@ export default function NavBar() {
       <nav className={`nav`}>
         <Link legacyBehavior href={"/"}>
           <a>
-            <Image width={100} height={100} src="/svg/banan-full-yellow.svg" alt="Banan"/>
+            <Image width={120} height={120} src="/svg/banan-full-yellow.svg" alt="Banan"/>
           </a>
         </Link>
         <div
