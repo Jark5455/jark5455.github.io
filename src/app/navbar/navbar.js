@@ -9,6 +9,12 @@ import './css/navbar.css'
 
 const MENU_LIST = [
     { text: "The Banan Project", href: "/" },
+    { text: "Blog", href: "/" },
+    { text: "Banan Engine", href: "/" },
+    { text: "The Profit Taker", href: "/" },
+    { text: "Other Works", href: "/" },
+    { text: "Our Story", href: "/" },
+    { text: "Philosophy", href: "/" },
   ];
 
 export default function NavBar() {

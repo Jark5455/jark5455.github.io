@@ -10,8 +10,12 @@ export default function Home() {
         <Head>
         </Head>
 
-        <Background />
+        <Background>
         <NavBar />
+
+        
+
+        </Background>
              
     </main>
   )
