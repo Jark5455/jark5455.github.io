@@ -105,6 +105,7 @@ nav {
     height: 6px;
     bottom: -16px;
     left: 0;
+    padding: 12px;
     background-color: #222222;
     transition: all 0.2s;
   }

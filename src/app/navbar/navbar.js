@@ -13,7 +13,6 @@ const MENU_LIST = [
     { text: "Banan Engine", href: "/" },
     { text: "The Profit Taker", href: "/" },
     { text: "Other Works", href: "/" },
-    { text: "Our Story", href: "/" },
     { text: "Philosophy", href: "/" },
   ];
 
