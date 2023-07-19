@@ -19,8 +19,8 @@ export default function NavBar() {
   const [activeIdx, setActiveIdx] = useState(-1);
 
   return (
-    <header className="absolute z-30 top-0 shadow-md sticky">
-      <nav className="flex p-[16px] justify-between items-center bg-darkergrey w-screen min-h-fit">
+    <header className="z-30 top-0 shadow-md sticky w-full">
+      <nav className="flex p-[16px] justify-between items-center bg-darkergrey min-h-fit">
         <Link legacyBehavior href={"/"}>
           <a className="no-underline text-lg text-inherit">
             <Image className="px-[8px]" width={120} height={120} src="/svg/banan-full-yellow.svg" alt="Banan"/>
