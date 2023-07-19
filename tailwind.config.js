@@ -15,6 +15,11 @@ module.exports = {
 
     fontFamily: {
       'roboto': ['Roboto Mono']
+    },
+
+    fontWeight: {
+      bold: 'bold',
+      medium: '100 900',
     }
   },
 
