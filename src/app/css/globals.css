@@ -2,20 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
-
-body::-webkit-scrollbar { 
-  display: none;
-}
-
-/* pallette
-
-  #FFD400 - Yellow
-  #222222 - Black
-  #50FFB1 - Teal
-  #F2F2F2 - Grey
-
-*/

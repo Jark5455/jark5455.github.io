@@ -68,11 +68,6 @@ nav {
   color: #f2f2f2;
 }
 
-.nav__item:hover {
- font-weight: bold;
- color: #50ffb1;
-}
-
 .center {
   min-height: 600px;
   display: flex;
