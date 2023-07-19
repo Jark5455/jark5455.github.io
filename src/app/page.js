@@ -9,9 +9,10 @@ export default function Home() {
         <Head>
         </Head>
 
-        <Background />
         <NavBar />
-        <HomePage />
+        <Background>
+          <HomePage />
+        </Background>
     </main>
   )
 }
