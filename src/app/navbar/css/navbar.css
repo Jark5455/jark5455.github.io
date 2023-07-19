@@ -62,13 +62,6 @@ nav {
   right: 0;
 }
 
-.nav__item {
-  font-size: 18px; 
-  position: relative;
-  transition: all 0.2s;
-  color: #f2f2f2;
-}
-
 .center {
   min-height: 600px;
   display: flex;
@@ -92,20 +85,5 @@ nav {
     width: fit-content;
     column-gap: 32px;
     align-items: center;
-  }
-
-  .nav__item::before {
-    content: '';
-    position: absolute;
-    width: 0%;
-    height: 6px;
-    bottom: -16px;
-    left: 0;
-    background-color: #222222;
-    transition: all 0.2s;
-  }
-  
-  .nav__item:hover:before {
-   width: 100%;
   }
 }

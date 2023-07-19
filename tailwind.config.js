@@ -8,9 +8,15 @@ module.exports = {
   theme: {
     colors: {
       yellow: '#ffd400',
-      darker_grey: '#222222',
+      darkergrey: '#222222',
       teal: '#50ffb1',
-      light_grey: '#f2f2f2'
+      lightgrey: '#f2f2f2'
+    },
+
+    extend: {
+      width: {
+        none: '0%'
+      }
     }
   },
   plugins: [],
