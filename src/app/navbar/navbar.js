@@ -31,7 +31,7 @@ export default function NavBar() {
           <div className="w-[40px] h-[4px] bg-lightgrey rounded-sm"></div>
           <div className="w-[40px] h-[4px] bg-lightgrey rounded-sm"></div>
         </div>
-        <div className={`${navActive ? "right-0" : ""} flex flex-col fixed top-[60px] width-[288px] gap-x-[24px] -right-[288px] px-[24px] py-[16px] transition-all duration-200 min-h-[calc(100vh-60px)] bg-darkergrey md:unset md:flex-row md:min-h-fit md:w-fit md:gap-y-[32px] md:items-center`}>
+        <div className={`${navActive ? "right-0" : ""} flex flex-col fixed top-[60px] width-[288px] gap-y-[24px] -right-[288px] px-[24px] py-[16px] transition-all duration-200 min-h-[calc(100vh-60px)] bg-darkergrey md:unset md:flex-row md:min-h-fit md:w-fit md:gap-x-[32px] md:items-center`}>
           {MENU_LIST.map((menu, idx) => (
             <div
               onClick={() => {
