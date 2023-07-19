@@ -19,7 +19,6 @@ module.exports = {
 
     fontWeight: {
       bold: 'bold',
-      medium: '500',
     }
   },
 
