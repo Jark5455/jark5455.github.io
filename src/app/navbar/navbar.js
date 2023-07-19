@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import React, { useState } from "react";
-import NavItem from "./navbar-item";
+import NavItem from "./navbar-item.js";
 
 const MENU_LIST = [
     { text: "The Banan Project", href: "/" },
