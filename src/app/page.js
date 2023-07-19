@@ -5,10 +5,12 @@ import HomePage from './main/home';
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between no-scrollbar">
-        <NavBar />
+      <Background />
+      <NavBar />
+
+      <div className="relative">
         <HomePage />
-        <Background>
-        </Background>
+      </div>
     </main>
   )
 }
