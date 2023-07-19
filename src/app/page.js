@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Background from './particles-bg';
 import NavBar from './navbar/navbar';
+import HomePage from './main/home';
 
 export default function Home() {
   return (
@@ -9,7 +10,8 @@ export default function Home() {
         </Head>
 
         <Background />
-        <NavBar />       
+        <NavBar />
+        <HomePage />
     </main>
   )
 }

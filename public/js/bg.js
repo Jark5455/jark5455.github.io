@@ -109,16 +109,8 @@ particlesJS('particles-bg',
   }
 );
 
-const frametime = 1 / 30;
-var deltaTime = 0;
-var lastTimestamp = 0;
-
 update = function() {
   requestAnimationFrame(update);
-
-  var timestamp = new Date().getTime()
-  deltaTime = (timestamp - lastTimestamp) / frametime;
-  lastTimestamp = timestamp;
 };
 
 requestAnimationFrame(update);
