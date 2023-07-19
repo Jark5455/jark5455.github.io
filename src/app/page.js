@@ -8,7 +8,7 @@ export default function Home() {
       <NavBar />
       <Background />
 
-      <div className="absolute w-[1240px] top-[200px] h-[calc(100%-60px)]" >
+      <div className="absolute w-[1240px] top-[200px] h-[calc(100%-200px)]" >
         <HomePage />
       </div>
     </main>
