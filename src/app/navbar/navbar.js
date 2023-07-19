@@ -3,9 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import React, { useState } from "react";
-import NavItemText from "./navbar-item-text";
-import NavItemImage from "./navbar-item-image";
-import './css/navbar.css'
+import NavItem from "./navbar-item";
 
 const MENU_LIST = [
     { text: "The Banan Project", href: "/" },
@@ -21,19 +19,19 @@ export default function NavBar() {
   const [activeIdx, setActiveIdx] = useState(-1);
 
   return (
-    <header>
-      <nav className={`nav`}>
+    <header className="absolute z-30 top-0">
+      <nav className="flex p-16 justify-between items-center	bg-darkergrey w-screen min-h-fit">
         <Link legacyBehavior href={"/"}>
-          <a>
-            <Image className="logo" width={120} height={120} src="/svg/banan-full-yellow.svg" alt="Banan"/>
+          <a className="no-underline text-lg text-inherit">
+            <Image className="px-[8px]" width={120} height={120} src="/svg/banan-full-yellow.svg" alt="Banan"/>
           </a>
         </Link>
-        <div onClick={() => setNavActive(!navActive)} className={`nav__menu-bar`}>
-          <div></div>
-          <div></div>
-          <div></div>
+        <div onClick={() => setNavActive(!navActive)} className="flex flex-col gap-y-[6px] cursor-pointer md:hidden">
+          <div className="w-[40px] h-[4px] bg-lightgrey rounded-sm"></div>
+          <div className="w-[40px] h-[4px] bg-lightgrey rounded-sm"></div>
+          <div className="w-[40px] h-[4px] bg-lightgrey rounded-sm"></div>
         </div>
-        <div className={`${navActive ? "active" : ""} nav__menu-list`}>
+        <div className={`${navActive ? "right-0" : ""} flex flex-col fixed top-[60px] width-[288px] gap-x-[24px] -right-[288px] px-[24px] py-[16px] transition-all duration-200 min-h-[calc(100vh-60px)] bg-darkergrey md:unset md:flex-row md:min-h-fit md:w-fit md:gap-y-[32px] md:items-center`}>
           {MENU_LIST.map((menu, idx) => (
             <div
               onClick={() => {
@@ -42,7 +40,7 @@ export default function NavBar() {
               }}
               key={menu.text}
             >
-              <NavItemText active={activeIdx === idx} {...menu} />
+              <NavItem active={activeIdx === idx} {...menu} />
             </div>
           ))}
         </div>
