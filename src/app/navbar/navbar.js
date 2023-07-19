@@ -6,12 +6,12 @@ import React, { useState } from "react";
 import NavItem from "./navbar-item.js";
 
 const MENU_LIST = [
-    { text: "The Banan Project", href: "/" },
-    { text: "Blog", href: "/" },
+    { text: "Home", href: "/" },
     { text: "Banan Engine", href: "/" },
     { text: "The Profit Taker", href: "/" },
     { text: "Other Works", href: "/" },
     { text: "Philosophy", href: "/" },
+    { text: "Blog", href: "/" }
   ];
 
 export default function NavBar() {
@@ -19,7 +19,7 @@ export default function NavBar() {
   const [activeIdx, setActiveIdx] = useState(-1);
 
   return (
-    <header className="absolute z-30 top-0">
+    <header className="absolute z-30 top-0 shadow-md">
       <nav className="flex p-[16px] justify-between items-center bg-darkergrey w-screen min-h-fit">
         <Link legacyBehavior href={"/"}>
           <a className="no-underline text-lg text-inherit">
