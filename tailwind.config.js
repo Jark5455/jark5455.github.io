@@ -13,10 +13,6 @@ module.exports = {
       lightgrey: '#f2f2f2'
     },
 
-    fontFamily: {
-      'roboto': ['Roboto Mono']
-    },
-
     fontWeight: {
       bold: 'bold',
     }
