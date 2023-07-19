@@ -12,6 +12,10 @@ module.exports = {
       teal: '#50ffb1',
       lightgrey: '#f2f2f2'
     },
+
+    fontFamily: {
+      'roboto': ['Roboto Mono']
+    }
   },
 
   plugins: [],
