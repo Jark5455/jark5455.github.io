@@ -20,7 +20,7 @@ export default function NavBar() {
 
   return (
     <header className="absolute z-30 top-0">
-      <nav className="flex p-16 justify-between items-center	bg-darkergrey w-screen min-h-fit">
+      <nav className="flex p-[16px] justify-between items-center bg-darkergrey w-screen min-h-fit">
         <Link legacyBehavior href={"/"}>
           <a className="no-underline text-lg text-inherit">
             <Image className="px-[8px]" width={120} height={120} src="/svg/banan-full-yellow.svg" alt="Banan"/>
