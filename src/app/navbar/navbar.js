@@ -19,7 +19,7 @@ export default function NavBar() {
   const [activeIdx, setActiveIdx] = useState(-1);
 
   return (
-    <header className="absolute z-30 top-0 shadow-md">
+    <header className="absolute z-30 top-0 shadow-md sticky">
       <nav className="flex p-[16px] justify-between items-center bg-darkergrey w-screen min-h-fit">
         <Link legacyBehavior href={"/"}>
           <a className="no-underline text-lg text-inherit">
