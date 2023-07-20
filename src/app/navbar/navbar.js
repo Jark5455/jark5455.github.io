@@ -9,7 +9,6 @@ const MENU_LIST = [
     { text: "Home", href: "/" },
     { text: "Banan Engine", href: "/" },
     { text: "The Profit Taker", href: "/" },
-    { text: "Other Works", href: "/" },
     { text: "Philosophy", href: "/" },
     { text: "Blog", href: "/" }
   ];
@@ -23,7 +22,7 @@ export default function NavBar() {
       <nav className="flex p-[16px] justify-between items-center bg-darkergrey min-h-fit">
         <Link legacyBehavior href={"/"}>
           <a className="no-underline text-lg text-inherit">
-            <Image className="px-[8px]" width={120} height={120} src="/svg/banan-full-yellow.svg" alt="Banan"/>
+            <Image className="p-[12px]" width={120} height={120} src="/svg/banan-full-yellow.svg" alt="Banan"/>
           </a>
         </Link>
         <div onClick={() => setNavActive(!navActive)} className="flex flex-col gap-y-[6px] cursor-pointer md:hidden">
@@ -31,7 +30,7 @@ export default function NavBar() {
           <div className="w-[40px] h-[4px] bg-lightgrey rounded-sm"></div>
           <div className="w-[40px] h-[4px] bg-lightgrey rounded-sm"></div>
         </div>
-        <div className={`${navActive ? "right-0" : ""} flex flex-col fixed top-[60px] width-[288px] gap-y-[24px] -right-[288px] px-[24px] py-[16px] transition-all duration-200 min-h-[calc(100vh-60px)] bg-darkergrey md:position-unset md:flex-row md:min-h-fit md:w-fit md:gap-x-[32px] md:items-center`}>
+        <div className={`${navActive ? "right-0" : ""} flex flex-col fixed top-[84px] width-[288px] gap-y-[24px] -right-[288px] px-[24px] py-[16px] transition-all duration-200 min-h-[calc(100vh-60px)] bg-darkergrey md:position-unset md:flex-row md:min-h-fit md:w-fit md:gap-x-[24px] md:items-center`}>
           {MENU_LIST.map((menu, idx) => (
             <div
               onClick={() => {
