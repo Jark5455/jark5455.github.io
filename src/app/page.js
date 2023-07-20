@@ -8,7 +8,7 @@ export default function Home() {
       <NavBar />
       <Background />
 
-      <div className="absolute flex w-[1240px] top-[200px] min-h-[calc(100%-200px)] h-fit" >
+      <div className="absolute flex w-[1240px] min-h-[calc(100%-200px)] h-fit" >
         <HomePage />
       </div>
     </main>
