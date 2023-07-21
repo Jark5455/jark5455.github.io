@@ -4,13 +4,15 @@ import HomePage from './main/home';
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between">
-      <NavBar />
+    <div className="w-full h-full">
       <Background />
+      <main className="flex min-h-screen flex-col items-center justify-between">
+        <NavBar />
 
-      <div className="absolute flex w-[1240px] min-h-[calc(100%-200px)] h-fit" >
-        <HomePage />
-      </div>
-    </main>
+        <div className="absolute flex top-[125px] w-fit h-fit" >
+          <HomePage />
+        </div>
+      </main>
+    </div>
   )
 }
