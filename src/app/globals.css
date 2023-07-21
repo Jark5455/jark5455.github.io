@@ -19,7 +19,6 @@
 
 @layer base {
   html, body, main {
-    height: fit-content;
     margin: 0;
     padding: 0;
     outline: none;
