@@ -12,6 +12,15 @@ export default function HomePage() {
             <div>
               <p className={`${roboto.className} uppercase text-sm tracking-widest text-teal`}>Hi, my name is Jark</p>
               <h1 className={`${roboto.className} py-4 text-lightgrey`}>Welcome to <span className="text-yellow">The Banan Project</span></h1>
+              <p className={`${roboto.className} py-4 text-teal max-w-[70%] m-auto`}>
+                I am a nincompoop who is working in 
+                computer graphics and machine learning.
+                Here, you will find my dumb ideas and 
+                projects I have made. You may also find
+                my propaganda and philosophy. Follow me
+                on my research journey. This site is under 
+                construction.
+              </p>
             </div>
         </div>
     </div>
