@@ -8,11 +8,11 @@ const roboto = Roboto_Mono({
 export default function HomePage() {
   return (
     <div className="w-full h-[85vh] text-center">
-        <div className="max-w-[1240px] w-full h-full mx-auto p-2 flex justify-center items-center rounded-3xl bg-darkergrey">
+        <div className="max-w-[1240px] w-full h-full mx-auto p-[5px] flex justify-center items-center rounded-3xl bg-darkergrey">
             <div>
               <p className={`${roboto.className} uppercase text-sm tracking-widest text-teal`}>Hi, my name is Jark</p>
-              <h1 className={`${roboto.className} py-4 text-lightgrey`}>Welcome to <span className="text-yellow">The Banan Project</span></h1>
-              <p className={`${roboto.className} py-4 text-teal max-w-[70%] m-auto`}>
+              <h1 className={`${roboto.className} py-[4px] text-lightgrey`}>Welcome to <span className="text-yellow">The Banan Project</span></h1>
+              <p className={`${roboto.className} py-[4px] text-teal max-w-[70%] m-auto`}>
                 I am a nincompoop who is working in 
                 computer graphics and machine learning.
                 Here, you will find my dumb ideas and 
