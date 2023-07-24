@@ -8,10 +8,10 @@ export default function Home() {
   return (
     <>
       <NavBar />
-      <main className="relative py-[50px] flex-grow items-center justify-between">
+      <main className="relative flex-grow items-center justify-between">
         <Background />
 
-        <div className="m-auto" >
+        <div className="m-auto p-[25px]" >
           <HomePage />
         </div>
       </main>

@@ -55,7 +55,7 @@ particlesJS('particles-bg',
       },
       "move": {
         "enable": true,
-        "speed": 2,
+        "speed": 9,
         "direction": "none",
         "random": false,
         "straight": false,
@@ -92,7 +92,7 @@ particlesJS('particles-bg',
           "size": 40,
           "duration": 2,
           "opacity": 8,
-          "speed": 3
+          "speed": 2
         },
         "repulse": {
           "distance": 200
