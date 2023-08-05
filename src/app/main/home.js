@@ -10,7 +10,7 @@ export default function HomePage() {
     <div className="w-full h-[85vh] text-center">
         <div className="max-w-[1240px] w-full h-full mx-auto p-[5px] flex justify-center items-center rounded-3xl bg-darkergrey">
             <div>
-              <p className={`${roboto.className} uppercase text-sm tracking-widest text-teal`}>Hi, my name is Jark</p>
+              <p className={`${roboto.className} uppercase text-sm tracking-widest text-teal`}>Hi, my name is Yash</p>
               <h1 className={`${roboto.className} py-[4px] text-lightgrey`}>Welcome to <span className="text-yellow">The Banan Project</span></h1>
               <p className={`${roboto.className} py-[4px] text-teal max-w-[70%] m-auto`}>
                 I am a nincompoop who is working in 
