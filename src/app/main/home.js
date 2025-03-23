@@ -1,27 +1,26 @@
-import { Roboto_Mono } from "next/font/google"
+import { Roboto_Mono } from "next/font/google";
 
 const roboto = Roboto_Mono({
-  weight: '500',
-  subsets: ['latin'],
-})
+  weight: "500",
+  subsets: ["latin"],
+});
 
 export default function HomePage() {
   return (
-    <div className="w-full h-[85vh] text-center">
-        <div className="max-w-[1240px] w-full h-full mx-auto p-[5px] flex justify-center items-center rounded-3xl bg-darkergrey">
-            <div>
-              <p className={`${roboto.className} uppercase text-sm tracking-widest text-teal`}>Hi, my name is Yash</p>
-              <h1 className={`${roboto.className} py-[4px] text-lightgrey`}>Welcome to <span className="text-yellow">The Banan Project</span></h1>
-              <p className={`${roboto.className} py-[4px] text-teal max-w-[70%] m-auto`}>
-                I am working in 
-                computer graphics and machine learning.
-                Here, you will find my ideas and 
-                projects I have made. Follow me
-                on my research journey. This site is under 
-                construction.
-              </p>
-            </div>
+    <div className="w-full h-[80vh] text-center">
+      <div className="max-w-[1240px] w-full h-full mx-auto p-20 flex justify-center items-center rounded-3xl bg-darkergrey">
+        <div>
+          <p className={`${roboto.className} text-sm tracking-widest text-white`}>
+            Hi, my name is Yash
+          </p>
+          <h1 className={`${roboto.className} py-4 text-lightgrey`}>
+            Welcome to <span className="text-yellow">The Banan Project</span>
+          </h1>
+          <p className={`${roboto.className} py-4 text-white`}>
+            I do machine learning, physics, computing, and other stuff
+          </p>
         </div>
+      </div>
     </div>
-  )
+  );
 }
