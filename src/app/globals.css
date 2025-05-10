@@ -1,10 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
     display: none;
+}
+
+@theme {
+    --color-yellow: #ffd400;
+    --color-darkergrey: #222222;
+    --color-lightgrey: #f2f2f2;
+    --color-black: #000000;
+    --color-white: #ffffff;
 }
 
 @layer utilities {
