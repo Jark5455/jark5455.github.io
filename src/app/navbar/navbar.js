@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
+
 import React, { useState } from "react";
+
 import NavItem from "./navbar-item.js";
 
 const MENU_LIST = [
@@ -35,7 +37,7 @@ export default function NavBar() {
           <div className="w-[40px] h-[4px] bg-lightgrey rounded-sm"></div>
         </div>
         <div
-          className={`${navActive ? "right-0" : ""} flex flex-col fixed top-[84px] width-[288px] gap-y-[24px] -right-[288px] px-[24px] py-[16px] transition-all duration-200 min-h-[calc(100vh-60px)] bg-darkergrey md:position-unset md:flex-row md:min-h-fit md:w-fit md:gap-x-[24px] md:items-center`}
+          className={`${navActive ? "right-0" : ""} flex flex-col fixed top-[84px] width-[288px] gap-y-[24px] -right-[288px] px-[24px] py-[16px] transition-all duration-200 min-h-[calc(100vh-60px)] bg-darkergrey md:static md:flex-row md:min-h-fit md:w-fit md:gap-x-[24px] md:items-center`}
         >
           {MENU_LIST.map((menu, idx) => (
             <div

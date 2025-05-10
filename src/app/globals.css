@@ -13,12 +13,6 @@
     --color-white: #ffffff;
 }
 
-@layer utilities {
-    .position-unset {
-        position: unset;
-    }
-}
-
 @layer base {
     h1,
     h2,

@@ -7,10 +7,10 @@ const roboto = Roboto_Mono({
 
 export default function HomePage() {
   return (
-    <div className="w-full h-[80vh] text-center">
-      <div className="max-w-[1240px] w-full h-full mx-auto p-20 flex justify-center items-center rounded-3xl bg-darkergrey">
+    <div className="w-full h-full text-center">
+      <div className="max-w-[1240px] mx-auto min-h-[80vh] p-20 flex justify-center items-center rounded-3xl bg-darkergrey">
         <div>
-          <p className={`${roboto.className} text-sm tracking-widest text-white`}>
+          <p className={`${roboto.className} py-2 text-sm tracking-widest text-white`}>
             Hi, my name is Yash
           </p>
           <h1 className={`${roboto.className} py-4 text-lightgrey`}>
