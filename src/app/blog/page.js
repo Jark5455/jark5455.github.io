@@ -2,7 +2,7 @@ import { Roboto_Mono } from "next/font/google";
 
 import Link from "next/link";
 
-import { promises as fs } from "fs";
+import fs from "fs";
 
 const roboto_bold = Roboto_Mono({
   weight: "500",
@@ -14,8 +14,8 @@ const roboto = Roboto_Mono({
   subsets: ["latin"],
 });
 
-export default async function Blog() {
-  const index_data = await fs.readFile(process.cwd() + "/src/app/blog/posts/index.json", "utf-8");
+export default function Blog() {
+  const index_data = fs.readFileSync(process.cwd() + "/src/app/blog/posts/index.json", "utf-8");
   const index = JSON.parse(index_data);
 
   return (

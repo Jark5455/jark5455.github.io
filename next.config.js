@@ -40,7 +40,11 @@ const withMDX = createMDX({
 
   options: {
     remarkPlugins: [remarkMath],
-    rehypePlugins: [rehypeKatex, rehypeStarryNight, rehypeStringify],
+    rehypePlugins: [
+      ["rehype-katex", { strict: false, throwOnError: true }],
+      rehypeStarryNight,
+      rehypeStringify,
+    ],
   },
 });
 

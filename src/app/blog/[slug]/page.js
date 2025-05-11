@@ -1,6 +1,6 @@
 import "../../blog/posts";
 
-import { promises as fs } from "fs";
+import fs from "fs";
 
 export default async function Page({ params }) {
   const { slug } = await params;
@@ -21,8 +21,8 @@ export default async function Page({ params }) {
   );
 }
 
-export async function generateStaticParams() {
-  const index_data = await fs.readFile(process.cwd() + "/src/app/blog/posts/index.json", "utf-8");
+export function generateStaticParams() {
+  const index_data = fs.readFileSync(process.cwd() + "/src/app/blog/posts/index.json", "utf-8");
   const index = JSON.parse(index_data);
 
   var id_list = [];
@@ -44,12 +44,12 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
 
   return {
-    title: await searchForTitle(slug),
+    title: searchForTitle(slug),
   };
 }
 
-async function searchForTitle(id) {
-  const index_data = await fs.readFile(process.cwd() + "/src/app/blog/posts/index.json", "utf-8");
+function searchForTitle(id) {
+  const index_data = fs.readFileSync(process.cwd() + "/src/app/blog/posts/index.json", "utf-8");
   const index = JSON.parse(index_data);
 
   for (const [year, list] of Object.entries(index)) {

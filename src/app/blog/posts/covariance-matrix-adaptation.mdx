@@ -35,8 +35,25 @@ However, there is one major issue of guassian evolutionary strategies. Since the
 
 This is where our hero "covariance matrix adaptation" comes in to fix this problem. Covariance matrix adaptation stores the direction that the mean of the population moves. If consecutive steps are in the same direction, the standard deviation (known as step size in covariance matrix adaptation) is increased to allow the algorithm to move faster as search larger areas. If consecutive steps are in different directions, the step size is decreased to allow the algorithm to converge quickly on a solution.
 
-the first GIF represents gaussian evolution strategies and the second one represents covariance matrix adaptation
+<center>
+  <table>
+    <thead>
+        <tr>
+          <th> Gaussian Evolution Strategies </th>
+          <th> Covariance Matrix Adaptation  </th>
+        </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td> ![gaussianes](/gif/gaussianes.gif) </td>
+        <td> ![cmaes](/gif/cmaes.gif) </td>
+      </tr>
+    </tbody>
+  </table>
 
-*Source: blog.otoro.net*
+  *Source: <u>[blog.otoro.net](https://blog.otoro.net/2017/10/29/visual-evolution-strategies/)</u>*
+</center>
 
-## Covariance Matrix Adaptation implementation
+## My covariance matrix adaptation implementation
+
+My implementation of covariance matrix adaptation can be found on my github repository for my machine learning in rust project called <u>[Milkshake](https://github.com/Jark5455/Milkshake/blob/main/src/optimizer/cmaes.rs)</u>, the same repo contains a few unfinished reinforcement learning experiments using covariance matrix adaptation.
