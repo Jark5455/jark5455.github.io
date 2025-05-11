@@ -1,6 +1,8 @@
+"use client";
+
 import Script from "next/script";
 
-export default function Background({ children }) {
+export default function Background() {
   return (
     <>
       <div
@@ -9,12 +11,10 @@ export default function Background({ children }) {
       >
         <Script
           defer
-          src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"
-          onload="particlesJS.load('particles-bg', 'json/particles.json');"
+          src={`https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js`}
+          onReady={() => particlesJS.load("particles-bg", "/json/particles.json")}
         />
       </div>
-
-      {children}
     </>
   );
 }

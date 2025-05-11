@@ -1,7 +1,6 @@
 import "./globals.css";
 
 import NavBar from "./navbar/navbar";
-import Background from "./particles-bg";
 
 export const metadata = {
   title: "The Banan Project",
@@ -22,7 +21,7 @@ export default function RootLayout({ children }) {
         </head>
         <body className="p-0 m-0 min-h-screen relative flex flex-col">
           <NavBar />
-          <Background>{children}</Background>
+          {children}
         </body>
       </html>
     </>

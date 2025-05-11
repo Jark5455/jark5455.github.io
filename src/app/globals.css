@@ -16,10 +16,7 @@
 @layer base {
     h1,
     h2,
-    h3,
-    h4,
-    h5,
-    h6 {
+    h3 {
         @apply font-bold;
     }
 
@@ -29,5 +26,17 @@
 
     h2 {
         @apply text-3xl sm:text-4xl;
+    }
+
+    h3 {
+        @apply text-[1.0rem] sm:text-[1.25rem];
+    }
+
+    * {
+        @apply text-lightgrey;
+    }
+
+    center {
+        @apply py-8;
     }
 }

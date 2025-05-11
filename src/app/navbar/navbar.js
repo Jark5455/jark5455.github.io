@@ -9,7 +9,7 @@ import NavItem from "./navbar-item.js";
 
 const MENU_LIST = [
   { text: "About", href: "/about" },
-  { text: "Blog", href: "/" },
+  { text: "Blog", href: "/blog" },
 ];
 
 export default function NavBar() {
