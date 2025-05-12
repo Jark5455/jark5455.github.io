@@ -1,0 +1,36 @@
+# Everything that went wrong with my beloved Banan Engine
+
+<center>
+![banan](https://images.pexels.com/photos/5966630/pexels-photo-5966630.jpeg)
+*Image Source: Vanessa Loring*
+</center>
+
+About 7 years ago now, I had started a c++ project, attempting to design my own custom rendering engine, known by many as the "banan engine". This rendering engine would become the purpose of my entire life, and the reason why I started this website, the banan branding, and the banan youtube channel tutorials. However, at this moment in time, the banan engine code repository is an unmaintainable, unreadable, unusable mess. This is an announcement of the end of life of the banan engine project. This article goes over everything that went wrong.
+
+## 1. The lack of an end goal
+
+During the development of banan engine, I had chanted about the importance of clarity, as "clarity brings purpose". However, banan engine had severely lacked clarity. Initially, the first goals of banan engine was supposed to be a asset loader for valve source engine assets. Then I would change it to be an efficient forward rendering system, then to a deferred rendering system, and then back to a clustered forward rendering system. Then I would ditch raster graphics completely and decide I wanted to develop a raytracer.
+
+I was to focused on staying on the cutting edge of computer graphics that I lacked the clarity required to develop a good product. Most of the features that would be implemented in banan engine would be implemented in the form of a prototype implementation that would break when I implemented another feature. This would lead to lots of code reversions, and lots of leftover unused fragments of dead code from previous generations of the engine. This could have all never been a problem if I had properly planned out the features of the engine and the development cycle of the engine.
+
+## 2. The lack of a proper rendergraph
+
+Part of the reason why all the features were implemented as "prototype implementations" was due to the lack of a proper render graph. In computer graphics, there are lots of rendering stages that can depend on each other, for example, the post processing pass depends on the lighting pass which depends on the shadow pass. In computer graphics, it is important that we write code that handles synchronization between the passes, and prevents read-write races. Typically in computer graphics, this is solved by a piece of code called a "rendergraph" which solves the dependencies and generates the graphics pipeline automatically.
+
+Banan engine had lacked a rendergraph for basically the entire development, meaning that I was hand writing all the synchronization code myself, which is partially why that the all the features were implemented in the form of prototypes. Every time that a new feature is implemented, it would basically completely break the entire graphics pipeline and I would spend hours banging my head trying to fix the synchronization. This could have all been avoided if I had designed a proper rendergraph.
+
+## 3. The lack of a proper entity component system
+
+In computer graphics, asset manangment is extremely difficult. First one has to upload the asset from CPU memory to GPU memory, and construct descriptor sets that point to the assets in GPU memory. GPU memory is very limited, so it is absolutely important that assets in GPU memory are not stored sparsely. Also, the construction of descriptors is extremely expensive, so it is important that we construct and bind descriptors not on a per draw call basis.
+
+Typically, an entity component system handles the CPU side of all of this, and makes transferring assets the GPU side rather trivial. However, banan engine had lacked an entity component system, and all the assets were stored in a single hashmap. This also includes dynamic assets like shadow maps. This turned descriptor construction from trivially easy to dauntingly difficult, and lead to more hours spent banging my head.
+
+## 4. I suck at C++
+
+Sometimes, when I am developing banan engines code, I look at something and think **"what was I thinking when I wrote that?"**. There are some really stupid design decisions in banan engine, and I unironically think that the c++ coding style I used fits rust better than c++. You would think that by around 20,000 lines of code I would have sort of figured it out by then right.
+
+It wasn't just the stylization either, the code just sucked. One day I had opened banan engine with valgrind and it had pointed out that I had *60,000* memory leaks. I would only end up fixing the leaks that were trivially obvious. For some reason, I had also unironically decided to use the default `std::unordered_map`. For those who don't use c++, this is the standard libraries hashmap implementation, which sucks a lot and is notoriously slow and inefficient.
+
+## The future of banan
+
+Since giving up on banan engine, there has been nothing for me to do. I have spent most my time rotting away playing video games. I feel free in some aspects, as I have time to enjoy myself. However, I am very uncertain about the future of the banan brand and where it will lead me. I will do my best to pivot banan and myself into a new area of focus outside of computer graphics, however I am not sure where yet. I will do my best to seek clarity to find purpose in my life.
