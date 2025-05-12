@@ -19,15 +19,15 @@ export default function Home() {
         <div className="w-full h-full text-center">
           <div className="max-w-[1240px] mx-auto min-h-[80vh] p-10 md:p-20 flex justify-center items-center rounded-3xl bg-darkergrey">
             <div>
-              <p className={`${roboto.className} py-2 text-sm tracking-widest text-white`}>
+              <h4 className={`${roboto.className} py-2 text-sm tracking-widest text-white`}>
                 Hi, my name is Yash
-              </p>
+              </h4>
               <h1 className={`${roboto.className} py-4 text-lightgrey`}>
                 Welcome to <span className="text-yellow">The Banan Project</span>
               </h1>
-              <p className={`${roboto.className} py-4 text-white`}>
+              <h4 className={`${roboto.className} py-4 text-white`}>
                 I do machine learning, physics, computing, and other stuff
-              </p>
+              </h4>
               <div className="flex items-center justify-between max-w-[210px] m-auto py-4">
                 <div className="border-2 border-lightgrey rounded-full p-4 hover:cursor-pointer hover:scale-110 ease-in duration-150">
                   <Link href="https://www.linkedin.com/in/yash-rachamalla-90114a2a7/">
