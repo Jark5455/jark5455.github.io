@@ -20,15 +20,17 @@ export default function Blog() {
 
   return (
     <main className="relative grow items-center justify-between">
-      <div className="m-auto p-[25px]">
+      <div className="m-auto p-[15px] md:p-[25px]">
         <div className="w-full h-full">
-          <div className="max-w-[1240px] mx-auto min-h-[80vh] p-20 items-center rounded-3xl bg-darkergrey">
+          <div className="max-w-[1240px] mx-auto min-h-[80vh] p-10 md:p-20 items-center rounded-3xl bg-darkergrey">
             <h1 className={`${roboto_bold.className} py-4 text-yellow`}>Posts</h1>
             {Object.entries(index)
               .sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
               .map((posts) => (
                 <div key={posts[0]} className="flex py-8">
-                  <h2 className={`${roboto_bold.className} mr-12 text-lightgrey`}>{posts[0]}</h2>
+                  <h2 className={`${roboto_bold.className} mr-4 md:mr-12 text-lightgrey`}>
+                    {posts[0]}
+                  </h2>
 
                   <ul className="grow">
                     {posts[1]

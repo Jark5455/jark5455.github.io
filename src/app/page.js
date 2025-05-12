@@ -15,9 +15,9 @@ const roboto = Roboto_Mono({
 export default function Home() {
   return (
     <main className="relative grow items-center justify-between">
-      <div className="m-auto p-[25px]">
+      <div className="m-auto p-[15px] md:p-[25px]">
         <div className="w-full h-full text-center">
-          <div className="max-w-[1240px] mx-auto min-h-[80vh] p-20 flex justify-center items-center rounded-3xl bg-darkergrey">
+          <div className="max-w-[1240px] mx-auto min-h-[80vh] p-10 md:p-20 flex justify-center items-center rounded-3xl bg-darkergrey">
             <div>
               <p className={`${roboto.className} py-2 text-sm tracking-widest text-white`}>
                 Hi, my name is Yash

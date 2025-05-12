@@ -7,9 +7,9 @@ export default function PostLayout({ children }) {
     <>
       <main className="relative grow items-center justify-between">
         {children}
-        <div className="m-auto p-[25px]">
+        <div className="m-auto p-[15px] md:p-[25px]">
           <div className="w-full h-full">
-            <div className="max-w-[1240px] mx-auto p-20 items-center rounded-3xl bg-darkergrey">
+            <div className="max-w-[1240px] mx-auto p-10 md:p-20 items-center rounded-3xl bg-darkergrey">
               <Giscus
                 id="comments"
                 repo="jark5455/jark5455.github.io"

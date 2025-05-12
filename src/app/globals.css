@@ -32,6 +32,14 @@
         @apply text-[1.0rem] sm:text-[1.25rem];
     }
 
+    p {
+        @apply text-[0.75rem];
+    }
+
+    span {
+        @apply text-[0.75rem];
+    }
+
     * {
         @apply text-lightgrey;
     }
