@@ -21,7 +21,7 @@ export default function PostLayout({ children }) {
                 reactionsEnabled="1"
                 emitMetadata="0"
                 inputPosition="top"
-                theme="http://localhost:3000/giscus.css"
+                theme="https://jark5455.github.io/giscus.css"
                 lang="en"
                 loading="lazy"
               />
