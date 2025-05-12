@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import NavItem from "./navbar-item.js";
 
 const MENU_LIST = [
+  { text: "Home", href: "/" },
   { text: "About", href: "/about" },
   { text: "Blog", href: "/blog" },
 ];
