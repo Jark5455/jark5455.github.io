@@ -36,10 +36,6 @@
         @apply text-[0.75rem];
     }
 
-    span {
-        @apply text-[0.75rem];
-    }
-
     * {
         @apply text-lightgrey;
     }
