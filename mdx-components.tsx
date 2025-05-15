@@ -2,6 +2,9 @@ import type { MDXComponents } from "mdx/types";
 
 import { Roboto_Mono } from "next/font/google";
 
+import Image from "next/image";
+import { ImageProps } from "next/image";
+
 const roboto_bold = Roboto_Mono({
   weight: "500",
   subsets: ["latin"],
@@ -34,7 +37,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
 
     // code block
-    pre: ({ children }) => <pre className={"bg-black rounded-lg my-2 p-2"}>{children}</pre>,
+    pre: ({ children }) => (
+      <pre className={"bg-black overflow-auto rounded-lg m-4 p-2"}>{children}</pre>
+    ),
 
     code: ({ children }) => (
       <code className={`${roboto.className} text-sm text-lightgrey`}>{children}</code>

@@ -12,6 +12,12 @@
       "id": "everything-that-went-wrong-with-my-beloved-banan-engine",
       "title": "Everything that went wrong with my beloved banan engine",
       "date": "12 May"
+    },
+
+    {
+      "id": "lossy-floating-point-compression-by-mantissa-truncation",
+      "title": "Lossy floating point compression by mantissa truncation",
+      "date": "15 May"
     }
   ]
 }
