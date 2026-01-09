@@ -1,0 +1,235 @@
+# Square packing algorithm
+
+The square-in-square packing problem is a combinatorics problem where the goal is to find a configuration of n squares that can be packed in the smallest possible containing square. For values of n that are perfect squares, the answer is trivial, however some configurations are well known for their chaoticness.
+
+For example the best known packing of 11 squares looks like this.
+
+<center>
+<img src="/svg/square-11.svg" width="60%" />
+*Image Source: David Ellsworth*
+</center>
+
+It is important to note that this is the "best known" packing, not the optimal packing. The difference is that the optimal packing is a packing that has been proven mathematically to be the best possible packing. The best known packing is just the best computers have solved for so far.
+
+Recently I have been working on my own brute force square packing algorithm that found this packing of 18 squares, which is only 0.4% larger than the best known packing of 18 squares.
+
+<center>
+<img src="/svg/my-square-18.svg" width="60%" />
+</center>
+
+And the best known packing of 18 squares looks like this
+
+<center>
+<img src="/svg/square-18.svg" width="60%" />
+*Image Source: David Ellsworth*
+</center>
+
+
+My algorithm that found the 18 square solution I presented took 2 days to converge on that solution. I had another instance of the algorithm that had been running with larger parameters, but after 3 weeks it still hadn't converged on a solution and my power company sent me an email about an "abnormality in power usage", which prompted me to pull the plug on the algorithm. I was hoping that by the time I am writing this blog post I would have found a new best configuration, however, it has been 2 months since I have developed the algorithm and I haven't found one so far.
+
+While the results are quite disappointing, I believe there can be value in the discussion of how the square packing algorithm works.
+
+## Gensane and Ryckelynck's algorithm
+
+Gensane and Ryckelynck's original algorithm works by trying to maximize the "inflation" of the squares. By inflation, I am referring to the scaling factor of a unit square such that there is no overlap between the other squares or the boundary.
+
+### Square-Square inflation
+
+Let $a$, $b$, and $\theta$, be the x position, y position, and rotation of a square respectively. The maximal inflation of between 2 unit squares such that they do not overlap is defined by $\psi = \max(\psi_1, \psi_2)$ where $\psi_1$ and $\psi_2$ are defined as
+
+<center>$$ \psi_1 = \psi_0 \begin{pmatrix} (a^{\prime} - a)\cos\theta + (b^{\prime} - b)\sin\theta \\ -(a^{\prime} - a)\sin\theta + (b^{\prime} - b)\cos\theta \\ \theta^{\prime} - \theta \end{pmatrix} $$</center>
+
+<center>$$ \psi_2 = \psi_0 \begin{pmatrix} (a - a^{\prime})\cos\theta^{\prime} + (b - b^{\prime})\sin\theta^{\prime} \\ -(a - a^{\prime})\sin\theta^{\prime} + (b - b^{\prime})\cos\theta^{\prime} \\ \theta - \theta^{\prime} \end{pmatrix} $$</center>
+
+where $\psi_0$ is defined as
+
+<center>$$\psi_0(a_0, b_0, \theta_0) = \underset{i = 1,...,4}{\min} \left\{ \frac{|a_0| + |b_0|}{1 - \sqrt{2}\text{sgn}(ab)\sin(\theta_0 + \frac{\pi}{4} + i\frac{\pi}{2})} \right\}$$</center>
+
+For a given configuration $C$, the maximum inflation of all the squares is simply 
+
+<center>$$\psi(C) = \underset{1\le i<j\le n}{\min} \psi(a_i, b_i, \theta_i, a_j, b_j, \theta_j)$$</center>
+
+### Square-Boundary inflation
+
+Given that the square must fit inside the boundary $[-L, L]^2$ The max inflation of a square such that it doesn't exceed the boundary is defined as
+
+<center>$$ \phi(a, b, \theta) = \frac{L - \max\left\{|a|, |b|\right\}}{\max\left\{|\cos\theta|, |\sin\theta|\right\}}$$</center>
+
+For a given configuration $C$, the maximum inflation of all the squares is simply
+
+<center>$$\underset{1 \le i \le n}{\min} \phi(a_i, b_i, \theta_i) $$</center>
+
+I won't discuss the proofs of these calculations but they can be found in the their original paper *"Improved Dense Packings of Congruent Squares in a Square"*. The max inflation for the configuration $C$ is defined as
+
+<center>$\omega = \min\left\{\psi(C), \phi(C)\right\}$</center>
+
+In their algorithm, they randomly sampled squares, applied a small "wiggle" to the squares, than compared how $\omega$ changed. If $\omega$ increased, the packing uses space more efficiently, and is a more optimal packing.
+
+They repeated this process thousands of times on an single threaded 800 MHz CPU to find the optimal packing of 11 squares that we know today.
+
+## My implementation
+
+One of the issues with their calculation is that calculating $\psi(C)$ scales has a $O(n^2)$ time complexity. The calculation complexity blows up when you try to use large N > 1000. To address this, I parallelized the calculation by implementing it with a cuda kernel.
+
+First I wrote a few helper definitions
+
+```cpp
+struct square {
+    float position[2];
+    float theta;
+};
+
+#define PI 3.14159265358979323846f
+#define ROOT_TWO 1.41421356237309504880f
+
+__device__ static float atomicMin(float* address, float val)
+{
+    int* address_as_i = (int*) address;
+    int old = *address_as_i, assumed;
+    do {
+        assumed = old;
+        old = ::atomicCAS(address_as_i, assumed,
+            __float_as_int(::fminf(val, __int_as_float(assumed))));
+    } while (assumed != old);
+    return __int_as_float(old);
+}
+
+__device__ float signum_device(float x) {
+    if (x < 0.0) return -1.0;
+    return 1.0;
+}
+```
+
+and then I wrote this kernel to solve for $\psi(C)$
+
+```cpp
+__device__ float psi0_device(float a, float b, float theta, int thread_idx_x_local) {
+    float idx = (float)thread_idx_x_local + 1.0;
+
+    float thetai = theta + (PI / 4.0) + (0.5 * idx * PI);
+    float f = 1.0f / fabsf(1.0f - (ROOT_TWO * signum_device(a * b) * sinf(thetai)));
+    return (fabsf(a) + fabsf(b)) * f;
+}
+
+__device__ float psi_qq_device(float a0, float b0, float theta0, float a1, float b1, float theta1, int thread_idx_y_local, int thread_idx_x_local) {
+    float t0 = a1 - a0;
+    float t1 = b1 - b0;
+
+    if (thread_idx_y_local == 0) {
+        return psi0_device((t0 * cosf(theta0)) + (t1 * sinf(theta0)), (-t0 * sinf(theta0)) + (t1 * cosf(theta0)), theta1 - theta0, thread_idx_x_local);
+    } else if (thread_idx_y_local == 1) {
+        return psi0_device((-t0 * cosf(theta1)) + (-t1 * sinf(theta1)), (t0 * sinf(theta1)) + (-t1 * cosf(theta1)), theta0 - theta1, thread_idx_x_local);
+    }
+
+    return FLT_MAX;
+}
+```
+
+In this kernel `thread_idx_x_local` is $i$ from
+
+<center>$$\psi_0(a_0, b_0, \theta_0) = \underset{i = 1,...,4}{\min} \left\{ \frac{|a_0| + |b_0|}{1 - \sqrt{2}\text{sgn}(ab)\sin(\theta_0 + \frac{\pi}{4} + i\frac{\pi}{2})} \right\}$$</center>
+
+and `thread_idx_y_local = 0` represents $\psi_1$ and `thread_idx_y_local = 1` represents $\psi_2$
+
+and I also implemented $\phi(C)$ similarly as 
+
+```cpp
+#define maxabs(a, b) (fmaxf(fabsf(a), fabsf(b)))
+
+__global__ void calculatePhiKernel(square* squares, int numSquares, float l_bound, float* finalPhis) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if (idx < numSquares) {
+        finalPhis[idx] = (l_bound - maxabs(squares[idx].position[0], squares[idx].position[1])) / maxabs(cosf(squares[idx].theta), sinf(squares[idx].theta));
+    }
+}
+```
+
+and then I copied a common min reduction kernel
+
+```cpp
+
+__global__ void reduceMinKernel(float* input, int inputSize, float* output) {
+    __shared__ float s_min[256];
+
+    int tid = threadIdx.x;
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if (i < inputSize) {
+        s_min[tid] = input[i];
+    } else {
+        s_min[tid] = FLT_MAX;
+    }
+    __syncthreads();
+
+    for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) {
+        if (tid < s && i + s < inputSize) {
+            if (s_min[tid + s] < s_min[tid]) {
+                s_min[tid] = s_min[tid + s];
+            }
+        }
+        __syncthreads();
+    }
+
+    if (tid == 0) {
+        atomicMin(output, s_min[0]);
+    }
+}
+```
+
+and finally executed the kernels to solve for $\omega$
+
+```cpp
+extern "C" float calculateOmega(square* h_squares, int numSquares, float l_bound) {
+    square* d_squares;
+    float* d_finalPairPsiQQs;
+    float* d_overallMinPsiQQ;
+    float* d_finalPhis;
+    float* d_overallMinPhi;
+
+    long long totalUniquePairs = (long long)numSquares * (numSquares - 1) / 2;
+    if (totalUniquePairs == 0) return FLT_MAX;
+    if (numSquares == 0) return FLT_MAX;
+
+    cudaMalloc(&d_squares, sizeof(square) * numSquares);
+    cudaMalloc(&d_finalPairPsiQQs, sizeof(float) * totalUniquePairs);
+    cudaMalloc(&d_overallMinPsiQQ, sizeof(float));
+    cudaMalloc(&d_finalPhis, sizeof(float) * numSquares);
+    cudaMalloc(&d_overallMinPhi, sizeof(float));
+
+    cudaMemcpy(d_squares, h_squares, sizeof(square) * numSquares, cudaMemcpyHostToDevice);
+
+    float host_initial_min = FLT_MAX;
+    cudaMemcpy(d_overallMinPsiQQ, &host_initial_min, sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_overallMinPhi, &host_initial_min, sizeof(float), cudaMemcpyHostToDevice);
+
+    dim3 threadsPerBlockPsi(4, 2);
+    int threadsPerBlock_reduce = 256;
+    calculatePairPsiQQKernel<<<totalUniquePairs, threadsPerBlockPsi>>>(d_squares, numSquares, d_finalPairPsiQQs);
+    int blocksPerGrid_reduce = (totalUniquePairs + threadsPerBlock_reduce - 1) / threadsPerBlock_reduce;
+    reduceMinKernel<<<blocksPerGrid_reduce, threadsPerBlock_reduce>>>(d_finalPairPsiQQs, totalUniquePairs, d_overallMinPsiQQ);
+
+    int blocksPerGridPhi = (numSquares + threadsPerBlock_reduce - 1) / threadsPerBlock_reduce;
+
+    calculatePhiKernel<<<blocksPerGridPhi, threadsPerBlock_reduce>>>(d_squares, numSquares, l_bound, d_finalPhis);
+    reduceMinKernel<<<blocksPerGridPhi, threadsPerBlock_reduce>>>(d_finalPhis, numSquares, d_overallMinPhi);
+
+    cudaDeviceSynchronize();
+
+    float h_overallMinPhi;
+    cudaMemcpy(&h_overallMinPhi, d_overallMinPhi, sizeof(float), cudaMemcpyDeviceToHost);
+
+    float h_overallMinPsiQQ;
+    cudaMemcpy(&h_overallMinPsiQQ, d_overallMinPsiQQ, sizeof(float), cudaMemcpyDeviceToHost);
+
+    cudaFree(d_squares);
+    cudaFree(d_finalPhis);
+    cudaFree(d_overallMinPhi);
+    cudaFree(d_finalPairPsiQQs);
+    cudaFree(d_overallMinPsiQQ);
+
+    return fminf(h_overallMinPhi, h_overallMinPsiQQ);
+}
+```
+
+The full implementation I used to find my configuration of 18 squares is available at <u>[this](https://github.com/Jark5455/squarepacker6000)</u> github repo.

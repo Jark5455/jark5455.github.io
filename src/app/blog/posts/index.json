@@ -18,6 +18,12 @@
       "id": "lossy-floating-point-compression-by-mantissa-truncation",
       "title": "Lossy floating point compression by mantissa truncation",
       "date": "15 May"
+    },
+
+    {
+      "id": "square-packing-algorithm",
+      "title": "Square packing algorithm",
+      "date": "3 Oct"
     }
   ]
 }
