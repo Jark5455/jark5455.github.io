@@ -9,16 +9,13 @@ export default async function Post({ params }) {
   const { default: Post } = await import(`../../blog/posts/${slug}.mdx`);
 
   return (
-    <>
-      <Background />
-      <div className="m-auto p-[15px] md:p-[25px]">
-        <div className="w-full h-full">
-          <div className="max-w-[1240px] mx-auto min-h-[80vh] p-10 md:p-20 items-center rounded-3xl bg-darkergrey">
-            <Post />
-          </div>
+    <div className="m-auto p-[15px] md:p-[25px]">
+      <div className="w-full h-full">
+        <div className="max-w-[1240px] mx-auto min-h-[80vh] p-10 md:p-20 items-center rounded-3xl bg-darkergrey">
+          <Post />
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
