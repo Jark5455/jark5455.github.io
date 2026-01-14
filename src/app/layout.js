@@ -12,7 +12,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <>
-      <html lang="en">
+      <html lang="en" className="overscroll-none">
         <head>
           <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css" />
           <link
