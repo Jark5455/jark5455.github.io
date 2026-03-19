@@ -9,9 +9,9 @@ import Background from "../particles-bg";
 export default function About() {
   return (
     <main className="relative grow items-center justify-between">
-      <div className="m-auto p-[25px]">
+      <div className="m-auto p-[10px] md:p-[25px]">
         <div className="w-full h-full">
-          <div className="max-w-[1240px] mx-auto min-h-[80vh] p-20 items-center rounded-3xl bg-darkergrey">
+          <div className="max-w-[1240px] mx-auto min-h-[80vh] p-6 md:p-20 items-center rounded-3xl bg-darkergrey">
             <Content />
           </div>
         </div>

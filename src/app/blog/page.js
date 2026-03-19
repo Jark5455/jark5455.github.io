@@ -17,20 +17,27 @@ const roboto = Roboto_Mono({
 });
 
 export default function Blog() {
-  const index_data = fs.readFileSync(process.cwd() + "/src/app/blog/posts/index.json", "utf-8");
+  const index_data = fs.readFileSync(
+    process.cwd() + "/src/app/blog/posts/index.json",
+    "utf-8",
+  );
   const index = JSON.parse(index_data);
 
   return (
     <main className="relative grow items-center justify-between">
-      <div className="m-auto p-[15px] md:p-[25px]">
+      <div className="m-auto p-[10px] md:p-[25px]">
         <div className="w-full h-full">
-          <div className="max-w-[1240px] mx-auto min-h-[80vh] p-10 md:p-20 items-center rounded-3xl bg-darkergrey">
-            <h1 className={`${roboto_bold.className} py-4 text-yellow`}>Posts</h1>
+          <div className="max-w-[1240px] mx-auto min-h-[80vh] p-6 md:p-20 items-center rounded-3xl bg-darkergrey">
+            <h1 className={`${roboto_bold.className} md:py-4 text-yellow`}>
+              Posts
+            </h1>
             {Object.entries(index)
               .sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
               .map((posts) => (
-                <div key={posts[0]} className="flex py-8">
-                  <h2 className={`${roboto_bold.className} mr-4 md:mr-12 text-lightgrey`}>
+                <div key={posts[0]} className="py-6 md:flex md:py-8">
+                  <h2
+                    className={`${roboto_bold.className} py-4 md:py-0 mr-6 md:mr-12 text-lightgrey`}
+                  >
                     {posts[0]}
                   </h2>
 
@@ -46,7 +53,9 @@ export default function Blog() {
                             className="flex justify-between align-baseline"
                             href={`/blog/${post["id"]}`}
                           >
-                            <h3 className={`${roboto_bold.className} text-lightgrey`}>
+                            <h3
+                              className={`${roboto_bold.className} text-lightgrey`}
+                            >
                               {post["title"]}
                             </h3>
                             <div className="flex items-center">
