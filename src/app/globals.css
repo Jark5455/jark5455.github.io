@@ -5,6 +5,11 @@
     display: none;
 }
 
+* {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
 @theme {
     --color-yellow: #ffd400;
     --color-darkergrey: #222222;

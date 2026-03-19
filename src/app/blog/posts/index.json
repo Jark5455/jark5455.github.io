@@ -25,5 +25,13 @@
       "title": "Square packing algorithm",
       "date": "3 Oct"
     }
+  ],
+
+  "2026": [
+    {
+      "id": "i-am-too-stupid-to-use-avx-512",
+      "title": "I am too stupid to use AVX-512",
+      "date": "19 March"
+    }
   ]
 }
