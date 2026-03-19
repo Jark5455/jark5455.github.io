@@ -34,7 +34,7 @@ export default function Blog() {
             {Object.entries(index)
               .sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
               .map((posts) => (
-                <div key={posts[0]} className="py-6 md:flex md:py-8">
+                <div key={posts[0]} className="py-2 md:flex md:py-8">
                   <h2
                     className={`${roboto_bold.className} py-4 md:py-0 mr-6 md:mr-12 text-lightgrey`}
                   >
