@@ -1,0 +1,367 @@
+# I am too stupid to use AVX-512
+
+<center>
+![avx-512](https://res.cloudinary.com/dx2orqjv8/images/f_webp,q_auto:best/v1743201361/blog/92c74e35-cac0-4530-94d0-27f8e6d6ac3c/92c74e35-cac0-4530-94d0-27f8e6d6ac3c.jpeg?_i=AA)
+</center>
+
+Recently, I have been working on a small rust sideproject, and I needed linear algebra library. I personally don't like nalgebra and ndarray so I decided to try to implement simple mat4 + vec4 library from online resources. I wanted to implement optimize the operations myself through SIMD intrinsics, and I spent a particularly long amount of time testing and messing around with the AVX-512 intrinsics. It has been particularly controversial in recent years as intel dropped support for it when they realized that E-cores in their new architecture couldn't work well with it. They received a lot of flak for that decision mainly because original version of alder lake DID come with AVX-512 support, but intel pushed out a microcode update that permanently fused off the features, after the fact the customer made the purchase.
+
+The main feature of AVX-512 obviously is the 512 bit register. You can fit an entire 4x4 f32 matrix in a single register now. However even with this, it appears that so far every implementation I have made was slower than the standard avx/avx2 implementation.
+
+For simplicity sake I defined the following struct in rust to help with writing different implementations
+
+```rust
+#[repr(C, align(16))]
+#[derive(Copy, Clone)]
+union f32x16 {
+    #[cfg(target_feature = "sse")]
+    pub sse: [__m128; 4],
+
+    #[cfg(target_feature = "avx")]
+    pub avx: [__m256; 2],
+
+    #[cfg(target_feature = "avx512f")]
+    pub avx512: __m512,
+
+    pub data: [f32; 16],
+}
+
+#[repr(transparent)]
+#[derive(Copy, Clone)]
+pub struct Mat4(f32x16);
+```
+
+## Simply Matrix Multiplication
+
+A simple naive 4x4 matrix multiplication in SSE would look something like this
+
+```rust
+#[cfg(all(target_feature = "sse", not(any(target_feature = "avx", target_feature = "avx512f"))))]
+#[inline(always)]
+fn mul(self, rhs: Self) -> Self::Output {
+
+    use std::arch::x86_64::{_mm_setzero_ps, _mm_shuffle_ps, _mm_mul_ps, _mm_add_ps};
+
+    unsafe {
+        let mut result = Mat4(f32x16 { sse: [_mm_setzero_ps(); 4] });
+
+        for i in 0..4 {
+            let b_col = rhs.0.sse[i];
+
+            let b_x = _mm_shuffle_ps(b_col, b_col, 0b00_00_00_00);
+            result.0.sse[i] = _mm_mul_ps(self.0.sse[0], b_x);
+
+            let b_y = _mm_shuffle_ps(b_col, b_col, 0b01_01_01_01);
+            result.0.sse[i] = _mm_add_ps(result.0.sse[i], _mm_mul_ps(self.0.sse[1], b_y));
+
+            let b_z = _mm_shuffle_ps(b_col, b_col, 0b10_10_10_10);
+            result.0.sse[i] = _mm_add_ps(result.0.sse[i], _mm_mul_ps(self.0.sse[2], b_z));
+
+            let b_w = _mm_shuffle_ps(b_col, b_col, 0b11_11_11_11);
+            result.0.sse[i] = _mm_add_ps(result.0.sse[i], _mm_mul_ps(self.0.sse[3], b_w));
+        }
+
+        result
+    }
+}
+```
+
+it uses the basic principle of matrix multiplication by simply transforming each vector in the right hand side matrix (rhs) by the left hand side matrix (self). To do this it simply broadcasts each element of each vector in the rhs matrix, multiplies each component with its corresponding column of the left hand matrix, then sums all the scalar vector products together.
+
+```rust
+#[cfg(all(target_feature = "sse", not(any(target_feature = "avx", target_feature = "avx512f"))))]
+#[inline(always)]
+fn mul(self, rhs: Self) -> Self::Output {
+
+    use std::arch::x86_64::{_mm_setzero_ps, _mm_shuffle_ps, _mm_mul_ps, _mm_add_ps};
+
+    unsafe {
+        let mut result = Mat4(f32x16 { sse: [_mm_setzero_ps(); 4] });
+
+        for i in 0..4 {
+            let b_col = rhs.0.sse[i];
+
+            let b_x = _mm_shuffle_ps(b_col, b_col, 0b00_00_00_00 /* component 1 of rhs */);
+            result.0.sse[i] = _mm_mul_ps(self.0.sse[0] /* column 1 of lhs */, b_x);
+
+            let b_y = _mm_shuffle_ps(b_col, b_col, 0b01_01_01_01 /* component 2 of rhs */);
+            result.0.sse[i] = _mm_add_ps(result.0.sse[i], _mm_mul_ps(self.0.sse[1] /* column 2 of lhs */, b_y));
+
+            let b_z = _mm_shuffle_ps(b_col, b_col, 0b10_10_10_10 /* component 3 of rhs */);
+            result.0.sse[i] = _mm_add_ps(result.0.sse[i], _mm_mul_ps(self.0.sse[2] /* column 3 of lhs */, b_z));
+
+            let b_w = _mm_shuffle_ps(b_col, b_col, 0b11_11_11_11 /* component 4 of rhs */);
+            result.0.sse[i] = _mm_add_ps(result.0.sse[i], _mm_mul_ps(self.0.sse[3] /* column 4 of lhs */, b_w));
+        }
+
+        result
+    }
+}
+```
+
+the avx2 implementation is pretty similar, except that it uses half the operations since we can pack 2 columns into 1 256 bit register instead of 2 128 bit registers.
+
+```rust
+#[cfg(all(target_feature = "avx", not(target_feature = "avx512f")))]
+#[inline(always)]
+fn mul(self, rhs: Self) -> Self {
+    use std::arch::x86_64::{_mm256_mul_ps, _mm256_add_ps, _mm256_permute2f128_ps, _mm256_permute_ps};
+
+    unsafe {
+        let mut result = Mat4(f32x16 { data: [0.0; 16] });
+
+        let a0_a0 = _mm256_permute2f128_ps(self.0.avx[0], self.0.avx[0], 0x00);
+        let a1_a1 = _mm256_permute2f128_ps(self.0.avx[0], self.0.avx[0], 0x11);
+
+        let a2_a2 = _mm256_permute2f128_ps(self.0.avx[1], self.0.avx[1], 0x00);
+        let a3_a3 = _mm256_permute2f128_ps(self.0.avx[1], self.0.avx[1], 0x11);
+
+        for i in 0..2 {
+            let b = rhs.0.avx[i];
+
+            result.0.avx[i] = _mm256_mul_ps(a0_a0, _mm256_permute_ps(b, 0x00));
+            result.0.avx[i] = _mm256_add_ps(_mm256_mul_ps(a1_a1, _mm256_permute_ps(b, 0x55)), result.0.avx[i]);
+            result.0.avx[i] = _mm256_add_ps(_mm256_mul_ps(a2_a2, _mm256_permute_ps(b, 0xAA)), result.0.avx[i]);
+            result.0.avx[i] = _mm256_add_ps(_mm256_mul_ps(a3_a3, _mm256_permute_ps(b, 0xFF)), result.0.avx[i]);
+        }
+
+        result
+    }
+}
+```
+
+and that wins us a roughly 50% performance boost over the SSE implementation
+
+```
+Matrix Matrix Mul/Mat4 Matrix Matrix Mul
+                        time:   [1.5740 ns 1.5745 ns 1.5751 ns]
+                        change: [−49.717% −49.550% −49.392%] (p = 0.00 < 0.05)
+                        Performance has improved.
+Found 8 outliers among 100 measurements (8.00%)
+  1 (1.00%) low severe
+  2 (2.00%) high mild
+  5 (5.00%) high severe
+```
+
+so logically, one would expect that a similarly implemented AVX-512 implementation would also get a significant gain.
+
+```rust
+#[cfg(target_feature = "avx512f")]
+#[inline(always)]
+fn mul(self, rhs: Self) -> Self {
+    use std::arch::x86_64::{_mm512_add_ps, _mm512_mul_ps, _mm512_shuffle_f32x4, _mm512_shuffle_ps};
+
+    unsafe {
+        let a = self.0.avx512;
+        let b = rhs.0.avx512;
+
+        let a0 = _mm512_shuffle_f32x4(a, a, 0x00);
+        let a1 = _mm512_shuffle_f32x4(a, a, 0x55);
+        let a2 = _mm512_shuffle_f32x4(a, a, 0xAA);
+        let a3 = _mm512_shuffle_f32x4(a, a, 0xFF);
+
+        let mut out = _mm512_mul_ps(a0, _mm512_shuffle_ps(b, b, 0x00));
+        out = _mm512_add_ps(_mm512_mul_ps(a1, _mm512_shuffle_ps(b, b, 0x55)), out);
+        out = _mm512_add_ps(_mm512_mul_ps(a2, _mm512_shuffle_ps(b, b, 0xAA)), out);
+        out = _mm512_add_ps(_mm512_mul_ps(a3, _mm512_shuffle_ps(b, b, 0xFF)), out);
+
+        Mat4(f32x16 { avx512: out })
+    }
+}
+```
+
+but infact thats completely wrong.
+
+```
+Matrix Matrix Mul/Mat4 Matrix Matrix Mul
+                        time:   [6.3638 ns 6.3672 ns 6.3713 ns]
+                        change: [+304.78% +305.15% +305.61%] (p = 0.00 < 0.05)
+                        Performance has regressed.
+Found 12 outliers among 100 measurements (12.00%)
+  1 (1.00%) low mild
+  5 (5.00%) high mild
+  6 (6.00%) high severe
+```
+
+and it kinda makes sense. There is a thousand different reasons you can use to explain this. It could be the fact that cross lane operations are more expensive. It could be that that the 512 bit variants of `_mm_mul`, `_mm_add` and `_mm_shuffle` simply have higher latency and lower throughput then the 256 and 128 bit variants. It could just be a bad implementation and a skill issue on my part.
+
+## Simple Matrix Transpose
+
+So then I moved on to matrix transposition. Matrix transposition is easy since its just a simply swivel operation. I assumed that AVX-512 would accel at this since there is no need to blend data between registers. For control purposes I first tested the following standard AVX2 tranpose.
+
+```rust
+#[cfg(all(target_feature = "avx2", not(target_feature = "avx512f")))]
+#[inline(always)]
+pub fn transpose(&self) -> Self {
+    // Mat4 layout: avx[0] = [c0₀ c0₁ c0₂ c0₃ | c1₀ c1₁ c1₂ c1₃]
+    //              avx[1] = [c2₀ c2₁ c2₂ c2₃ | c3₀ c3₁ c3₂ c3₃]
+    // Goal rows:   res[0] = [c0₀ c1₀ c2₀ c3₀ | c0₁ c1₁ c2₁ c3₁] (Rows 0, 1)
+    //              res[1] = [c0₂ c1₂ c2₂ c3₂ | c0₃ c1₃ c2₃ c3₃] (Rows 2, 3)
+    use std::arch::x86_64::{_mm256_permutevar8x32_ps, _mm256_blend_ps, _mm256_set_epi32};
+
+    unsafe {
+        // Indices for Row 0/1: [idx5, idx1, idx5, idx1, idx4, idx0, idx4, idx0]
+        let idx01 = _mm256_set_epi32(5, 1, 5, 1, 4, 0, 4, 0);
+        let t0 = _mm256_permutevar8x32_ps(self.0.avx[0], idx01);
+        let t1 = _mm256_permutevar8x32_ps(self.0.avx[1], idx01);
+        let res01 = _mm256_blend_ps(t0, t1, 0b11001100);
+
+        // Indices for Row 2/3: [idx7, idx3, idx7, idx3, idx6, idx2, idx6, idx2]
+        let idx23 = _mm256_set_epi32(7, 3, 7, 3, 6, 2, 6, 2);
+        let t2 = _mm256_permutevar8x32_ps(self.0.avx[0], idx23);
+        let t3 = _mm256_permutevar8x32_ps(self.0.avx[1], idx23);
+        let res23 = _mm256_blend_ps(t2, t3, 0b11001100);
+
+        Mat4(f32x16 { avx: [res01, res23] })
+    }
+}
+```
+
+very simple, transposes the matrix in 6 instructions. And then the AVX-512 implementation looks like this
+
+```rust
+#[cfg(target_feature = "avx512f")]
+#[inline(always)]
+pub fn transpose(&self) -> Self {
+    use std::arch::x86_64::{_mm512_permutexvar_ps, _mm512_set_epi32};
+
+    unsafe {
+        let indices = _mm512_set_epi32(
+            15, 11, 7, 3,  // Row 3 maps to Col 3
+            14, 10, 6, 2,  // Row 2 maps to Col 2
+            13,  9, 5, 1,  // Row 1 maps to Col 1
+            12,  8, 4, 0   // Row 0 maps to Col 0
+        );
+
+        let transposed = _mm512_permutexvar_ps(indices, self.0.avx512);
+        Mat4(f32x16 { avx512: transposed })
+    }
+}
+```
+
+even simpler, its literally one instruction. But the results surprised me quite a bit
+
+```
+Matrix Transpose/Mat4 Transpose
+                        time:   [4.0170 ns 4.0173 ns 4.0176 ns]
+                        change: [+600.21% +600.31% +600.45%] (p = 0.00 < 0.05)
+                        Performance has regressed.
+Found 8 outliers among 100 measurements (8.00%)
+  5 (5.00%) low mild
+  1 (1.00%) high mild
+  2 (2.00%) high severe
+```
+
+AVX-512 was a staggering 600% slower than the AVX2. So at this point I was thinking something was wrong, so I pasted my code into godbolt to try to figure out if LLVM was doing something weird.
+
+### AVX-512 Implementation
+
+```x86asm
+.LCPI0_0:
+        .long   0
+        .long   4
+        .long   8
+        .long   12
+        .long   1
+        .long   5
+        .long   9
+        .long   13
+        .long   2
+        .long   6
+        .long   10
+        .long   14
+        .long   3
+        .long   7
+        .long   11
+        .long   15
+example::main::hb98fc185a6f3c541:
+        push    rbp
+        mov     rbp, rsp
+        and     rsp, -64
+        sub     rsp, 192
+        vxorps  xmm0, xmm0, xmm0
+        vmovaps ymmword ptr [rsp + 32], ymm0
+        vmovaps ymmword ptr [rsp], ymm0
+        mov     rax, rsp
+        vmovaps zmm0, zmmword ptr [rip + .LCPI0_0]
+        vpermps zmm0, zmm0, zmmword ptr [rsp]
+        vmovaps zmmword ptr [rsp + 64], zmm0
+        lea     rax, [rsp + 64]
+        mov     rsp, rbp
+        pop     rbp
+        vzeroupper
+        ret
+```
+
+### AVX2 Implementation
+
+```x86asm
+.LCPI0_0:
+        .zero   4
+        .zero   4
+        .long   0
+        .long   4
+        .zero   4
+        .zero   4
+        .long   1
+        .long   5
+.LCPI0_1:
+        .long   0
+        .long   4
+        .zero   4
+        .zero   4
+        .long   1
+        .long   5
+        .zero   4
+        .zero   4
+.LCPI0_2:
+        .zero   4
+        .zero   4
+        .long   2
+        .long   6
+        .zero   4
+        .zero   4
+        .long   3
+        .long   7
+.LCPI0_3:
+        .long   2
+        .long   6
+        .zero   4
+        .zero   4
+        .long   3
+        .long   7
+        .zero   4
+        .zero   4
+example::main::hb98fc185a6f3c541:
+        push    rbp
+        mov     rbp, rsp
+        and     rsp, -32
+        sub     rsp, 160
+        vxorps  xmm0, xmm0, xmm0
+        vmovaps ymmword ptr [rsp + 32], ymm0
+        vmovaps ymmword ptr [rsp], ymm0
+        mov     rax, rsp
+        vmovaps ymm0, ymmword ptr [rsp]
+        vmovaps ymm1, ymmword ptr [rsp + 32]
+        vmovaps ymm2, ymmword ptr [rip + .LCPI0_0]
+        vpermps ymm2, ymm2, ymm1
+        vmovaps ymm3, ymmword ptr [rip + .LCPI0_1]
+        vpermps ymm3, ymm3, ymm0
+        vblendps        ymm2, ymm3, ymm2, 204
+        vmovaps ymm3, ymmword ptr [rip + .LCPI0_2]
+        vpermps ymm1, ymm3, ymm1
+        vmovaps ymm3, ymmword ptr [rip + .LCPI0_3]
+        vpermps ymm0, ymm3, ymm0
+        vblendps        ymm0, ymm0, ymm1, 204
+        vmovaps ymmword ptr [rsp + 64], ymm2
+        vmovaps ymmword ptr [rsp + 96], ymm0
+        lea     rax, [rsp + 64]
+        mov     rsp, rbp
+        pop     rbp
+        vzeroupper
+        ret
+```
+
+To me, both look pretty normal. So now I am really confused. Both implementations do the exact same thing, but the one that uses more instructions and has cross register blending is supposedly *FASTER* than the one that uses 1 register and 1 instruction? There is clearly something else going on here that is way beyond my understanding. Is the instruction simply that much slower? For context I am personally benchmarking on a Zen 5 cpu using the rust crate "criterion".
+
+Right now I am unable to get any performant usage from AVX-512. For now I simply won't be using it in my linalg subpackage since I clearly can't figure out how to use it performantly.
